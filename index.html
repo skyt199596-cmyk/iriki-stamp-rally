@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入来麓武家屋敷群 重ね押しスタンプラリー</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #f7f5f0; /* 上品で落ち着いた砂色 */
+      color: #2c2c2c;
+      padding-bottom: 75px;
+    }
+    
+    /* ヘッダー（シックな茜色と細い金ライン） */
+    .header {
+      background: #7a1f1d; /* 洗練されたえんじ色 */
+      color: #ffffff;
+      text-align: center;
+      padding: 18px 10px;
+      border-bottom: 2px solid #c8a063;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    .header h1 { 
+      margin: 0; 
+      font-size: 1.25rem; 
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+    .header p { 
+      margin: 4px 0 0 0; 
+      font-size: 0.78rem; 
+      opacity: 0.85; 
+      letter-spacing: 1.5px;
+    }
+
+    /* コンテナ */
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .page-content {
+      display: none;
+    }
+    .page-content.active {
+      display: block;
+    }
+
+    /* 洗練された和モダンカード */
+    .chic-card {
+      background: #ffffff;
+      border: 1px solid #e5dfd5;
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    /* 重ね押しスタンプ台紙 */
+    .stamp-board-card {
+      background: #ffffff;
+      border: 1px solid #c8a063;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(122,31,29,0.06);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .stamp-canvas-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      background: #efebe4;
+    }
+    .stamp-card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .stamp-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .stamp-card.step-1 .layer-1 { opacity: 1; }
+    .stamp-card.step-2 .layer-1, .stamp-card.step-2 .layer-2 { opacity: 1; }
+    .stamp-card.step-3 .layer-1, .stamp-card.step-3 .layer-2, .stamp-card.step-3 .layer-3 { opacity: 1; }
+    .stamp-card.step-4 .layer-1, .stamp-card.step-4 .layer-2, .stamp-card.step-4 .layer-3, .stamp-card.step-4 .layer-4 { opacity: 1; }
+
+    /* おしゃれなボタン設計 */
+    .btn {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      margin: 12px auto;
+      padding: 13px 0;
+      border: none;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      letter-spacing: 1px;
+      transition: opacity 0.2s ease;
+    }
+    .btn:active {
+      opacity: 0.85;
+    }
+    .btn-primary { 
+      background: #7a1f1d; 
+      color: #ffffff; 
+    }
+    .btn-save { 
+      background: #c8a063; 
+      color: #ffffff; 
+      display: none; 
+    }
+
+    /* 見出し装飾 */
+    .section-title {
+      font-size: 1.05rem;
+      color: #7a1f1d;
+      margin-top: 0;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #c8a063;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* テスト用パネル */
+    .test-panel {
+      margin-top: 24px;
+      padding: 12px;
+      background: #efebe4;
+      border: 1px dashed #c8a063;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    /* 下部固定ナビゲーション（黒茶色のシックなデザイン） */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 62px;
+      background: #1f1c1a;
+      border-top: 1px solid #c8a063;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+    .nav-item {
+      color: #8c857b;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.72rem;
+      cursor: pointer;
+      flex: 1;
+      letter-spacing: 0.5px;
+    }
+    .nav-item.active {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .nav-item.active .nav-icon {
+      color: #c8a063;
+    }
+    .nav-icon {
+      font-style: normal;
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <h1>入来麓武家屋敷群</h1>
+    <p>〜 重ね押しスタンプラリー 〜</p>
+  </div>
+
+  <div class="container">
+
+    <!-- 1. ホーム画面 -->
+    <div id="page-home" class="page-content active">
+      <div id="stampCounterBadge" style="text-align: center; margin-bottom: 14px;">
+        <span style="display: inline-block; background: #ffffff; color: #7a1f1d; padding: 6px 18px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; border: 1px solid #c8a063; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+          スタンプ獲得数: <span id="currentStampCount" style="color: #7a1f1d; font-weight: bold; font-size: 1.05rem;">0</span> / 4
+        </span>
+      </div>
+
+      <div class="stamp-board-card">
+        <div class="stamp-canvas-wrapper" id="canvasWrapper">
+          <div class="stamp-card step-0" id="stampCard">
+            <img src="stamp_step1.png" class="stamp-layer layer-1" alt="スタンプ1">
+            <img src="stamp_step2.png" class="stamp-layer layer-2" alt="スタンプ2">
+            <img src="stamp_step3.png" class="stamp-layer layer-3" alt="スタンプ3">
+            <img src="stamp_step4.png" class="stamp-layer layer-4" alt="スタンプ4">
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary">📷 QRコードをスキャン</button>
+      <button class="btn btn-save" id="saveImgBtn">🖼️ イラストを保存</button>
+
+      <div class="test-panel">
+        <div style="font-size: 0.78rem; margin-bottom: 6px; color: #666;">🛠️ デベロッパー用テストパネル</div>
+        <div id="testButtons"></div>
+      </div>
+    </div>
+
+    <!-- 2. ガイド画面 -->
+    <div id="page-guide" class="page-content">
+      <div class="chic-card" style="border-left: 4px solid #7a1f1d;">
+        <h2 class="section-title">🏯 入来麓（いりきふもと）武家屋敷群とは？</h2>
+        <p style="font-size: 0.86rem; color: #444; line-height: 1.65; margin-bottom: 8px;">
+          鹿児島県薩摩川内市にある<strong>「入来麓」</strong>は、江戸時代に薩摩藩が設けた武士たちの集落（外城）の面影を今に伝える歴史的な街並みです。国の「重要伝統的建造物群保存地区」にも選定されています。
+        </p>
+        <p style="font-size: 0.86rem; color: #444; line-height: 1.65; margin: 0;">
+          近くの川から運び出された丸い石を重ねた<strong>「玉石垣」</strong>や、防衛のために屈曲させた道路構造など、戦国時代の名残と武士の暮らしの工夫が今も大切に守られています。
+        </p>
+      </div>
+
+      <h2 style="font-size: 1.05rem; margin-bottom: 12px; color: #2c2c2c; font-weight: 600;">📍 スポット進行状況 & 豆知識ガイド</h2>
+      <div class="spot-list" id="guideSpotList"></div>
+    </div>
+
+    <!-- 3. 地図画面 -->
+    <div id="page-map" class="page-content">
+      <div class="chic-card" style="text-align: center;">
+        <h2 class="section-title" style="text-align: left;">🎨 入来麓 散策イラストマップ</h2>
+        <img src="map_illust.png" alt="入来麓散策イラストマップ" style="width: 100%; max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #e5dfd5;" onerror="this.style.display='none'; document.getElementById('mapImgFallback').style.display='block';">
+        <div id="mapImgFallback" style="display: none; padding: 20px; background: #faf8f5; border: 1px dashed #c8a063; border-radius: 6px; color: #777; font-size: 0.85rem;">
+          ⚠️ 「map_illust.png」が index.html と同じフォルダにあるか確認してください。
+        </div>
+      </div>
+
+      <div class="chic-card">
+        <h2 class="section-title">🗺️ Googleマップ（位置確認・ナビ）</h2>
+        <div style="width: 100%; height: 300px; border-radius: 6px; overflow: hidden; border: 1px solid #e5dfd5;">
+          <iframe src="https://maps.google.com/maps?q=入来麓観光案内所&hl=ja&z=16&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <h2 style="font-size: 1.05rem; margin-bottom: 12px; color: #2c2c2c; font-weight: 600;">ℹ️ 周辺施設・案内情報</h2>
+      <div class="chic-card" style="border-left: 4px solid #7a1f1d;">
+        <h3 style="margin: 0 0 8px 0; font-size: 0.95rem; color: #2c2c2c;">🏯 施設営業案内</h3>
+        <ul style="margin: 0; padding-left: 18px; font-size: 0.85rem; color: #555; line-height: 1.65;">
+          <li><strong>入来麓観光案内所：</strong><br>営業時間 9:00〜17:00（年末年始休館）</li>
+          <li style="margin-top: 6px;"><strong>旧増田家住宅：</strong><br>公開時間 9:00〜17:00（入館は16:30まで）<br><small style="color: #777;">※月曜日休館（祝日の場合は翌日）</small></li>
+        </ul>
+      </div>
+
+      <div class="chic-card" style="border-left: 4px solid #3d6b4c;">
+        <h3 style="margin: 0 0 8px 0; font-size: 0.95rem; color: #2c2c2c;">🅿️ 駐車場・お手洗い</h3>
+        <ul style="margin: 0; padding-left: 18px; font-size: 0.85rem; color: #555; line-height: 1.65;">
+          <li><strong>無料駐車場：</strong> 入来麓観光案内所 横（大型バス対応・普通車多数可）</li>
+          <li style="margin-top: 6px;"><strong>公衆トイレ：</strong> 観光案内所横、旧増田家住宅敷地内（多目的トイレあり）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4. 使い方画面 -->
+    <div id="page-usage" class="page-content">
+      <div class="chic-card">
+        <h2 class="section-title">📱 スタンプラリーの遊び方</h2>
+        
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="background: #7a1f1d; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; font-size: 0.85rem;">1</div>
+          <div>
+            <h3 style="margin: 0 0 4px 0; font-size: 0.92rem; color: #2c2c2c;">スポットを巡ろう</h3>
+            <p style="margin: 0; font-size: 0.82rem; color: #666; line-height: 1.5;">「ガイド」や「地図」を参考に、入来麓武家屋敷群にある4箇所のスタンプスポットを訪ねてみましょう。</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="background: #7a1f1d; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; font-size: 0.85rem;">2</div>
+          <div>
+            <h3 style="margin: 0 0 4px 0; font-size: 0.92rem; color: #2c2c2c;">QRコードをスキャン</h3>
+            <p style="margin: 0; font-size: 0.82rem; color: #666; line-height: 1.5;">現地に設置された看板のQRコードを、ホーム画面の「📷 QRコードをスキャン」ボタンから読み取ります。</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="background: #7a1f1d; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; font-size: 0.85rem;">3</div>
+          <div>
+            <h3 style="margin: 0 0 4px 0; font-size: 0.92rem; color: #2c2c2c;">重ね押しでイラスト完成！</h3>
+            <p style="margin: 0; font-size: 0.82rem; color: #666; line-height: 1.5;">スタンプを押すごとに版画のように色が重なっていきます。獲得したスポットの「豆知識」もガイド画面で解放されます！</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="background: #7a1f1d; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; font-size: 0.85rem;">4</div>
+          <div>
+            <h3 style="margin: 0 0 4px 0; font-size: 0.92rem; color: #2c2c2c;">完成イラストを保存</h3>
+            <p style="margin: 0; font-size: 0.82rem; color: #666; line-height: 1.5;">4箇所すべて集めると、あなたの達成順位が入った「イラストを保存」ボタンが出現し、記念画像をダウンロードできます。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chic-card" style="border-top: 3px solid #b33939;">
+        <h2 style="font-size: 1.0rem; color: #b33939; margin-top: 0; margin-bottom: 12px; padding-bottom: 4px; border-bottom: 1px dashed #e5dfd5; font-weight: 600;">🚫 散策時の禁止事項・マナー</h2>
+        <ul style="margin: 0; padding-left: 18px; font-size: 0.83rem; color: #444; line-height: 1.65;">
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #b33939;">立ち入り禁止場所への侵入厳禁：</strong><br>
+            武家屋敷群内には現在も地域の方が生活されている個人宅があります。「立入禁止」の表示がある場所や私有地、ロープが張られた危険区域には絶対に入らないでください。
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong>歩きスマホの禁止：</strong><br>
+            石垣沿いの道や階段、狭い路地では足元にご注意ください。画面操作やマップの確認は、必ず安全な場所に立ち止まって行いましょう。
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong>歴史的建造物・石垣の保護：</strong><br>
+            貴重な玉石垣や門に登ったり、傷つけたりする行為はおやめください。
+          </li>
+          <li>
+            <strong>ゴミの持ち帰り：</strong><br>
+            美しい景観と環境を守るため、散策中に出たゴミは各自でお持ち帰りください。
+          </li>
+        </ul>
+      </div>
+
+      <div class="chic-card" style="border-left: 4px solid #3b6b88;">
+        <h2 style="font-size: 0.95rem; color: #2c2c2c; margin-top: 0; margin-bottom: 8px; font-weight: 600;">💡 アプリご利用上の注意点</h2>
+        <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; color: #666; line-height: 1.55;">
+          <li>ブラウザの履歴・キャッシュを削除すると、集めたスタンプデータが消えてしまう場合があります。散策中は同じブラウザ（SafariやChromeなど）を開いたままご使用ください。</li>
+          <li style="margin-top: 6px;">カメラが起動しない場合は、スマホのブラウザ設定で「カメラへのアクセス許可」がオンになっているかご確認ください。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 下部固定ナビゲーションバー -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchPage('home', this)">
+      <i class="nav-icon">🏠</i>
+      <span>ホーム</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('guide', this)">
+      <i class="nav-icon">📍</i>
+      <span>ガイド</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('map', this)">
+      <i class="nav-icon">🗺️</i>
+      <span>地図</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('usage', this)">
+      <i class="nav-icon">❓</i>
+      <span>使い方</span>
+    </div>
+  </nav>
+
+  <!-- JavaScript制御部分 -->
+  <script>
+    var STAMP_SPOTS = [
+      { id: "spot1", name: "1. 入来麓観光案内所", description: "武家屋敷群散策のスタート地点。", trivia: "【枡形（ますがた）の門】薩摩の武家集落「麓」では、敵が直進して攻め込めないように門を入ると道がL字や枡形に曲がる構造になっています。" },
+      { id: "spot2", name: "2. お仮屋馬場", description: "武家の格や格式が現れる石垣の並び。", trivia: "【川の丸石を活用】近くの清色川（樋脇川）から丸い河原石を運び出し、美しく積み上げて作った石垣です。" },
+      { id: "spot3", name: "3. 清色城跡", description: "中世の山城の雰囲気を伝える国指定史跡。", trivia: "【シラス台地を掘り割った「堀切」】断崖絶壁のようにそびえる土壁は、自然のシラス台地を深く掘り削って作った天然の要塞です。" },
+      { id: "spot4", name: "4. 旧増田家住宅", description: "明治初期の貴重な武家住宅建築。", trivia: "【おもて と なかえ】薩摩の武家住宅は、お客様をもてなす「おもて」と生活空間の「なかえ」という2つの建物が合体した「二ツ家」構造です。" }
+    ];
+
+    var acquiredStamps = JSON.parse(localStorage.getItem('iriki_acquired_stamps')) || [];
+    var userCompletionOrder = localStorage.getItem('iriki_completion_order') || null;
+
+    function switchPage(pageId, element) {
+      const pages = document.querySelectorAll('.page-content');
+      pages.forEach(page => {
+        page.classList.remove('active');
+        page.style.display = 'none';
+      });
+
+      const targetPage = document.getElementById(`page-${pageId}`);
+      if (targetPage) {
+        targetPage.classList.add('active');
+        targetPage.style.display = 'block';
+      }
+
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => item.classList.remove('active'));
+
+      if (element) {
+        element.classList.add('active');
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    function renderGuideSpotList() {
+      const guideList = document.getElementById('guideSpotList');
+      if (!guideList) return;
+
+      let html = '';
+      STAMP_SPOTS.forEach((spot) => {
+        const isCleared = acquiredStamps.includes(spot.id);
+        html += `
+          <div class="chic-card" style="border: 1px solid ${isCleared ? '#7a1f1d' : '#e5dfd5'}; background: ${isCleared ? '#ffffff' : '#faf8f5'};">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h3 style="margin: 0; font-size: 0.95rem; color: #2c2c2c; font-weight: 600;">${spot.name}</h3>
+              <span style="font-size: 0.72rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; background: ${isCleared ? '#7a1f1d' : '#e0dad0'}; color: ${isCleared ? '#ffffff' : '#666666'};">
+                ${isCleared ? '✓ 獲得済み' : '未獲得'}
+              </span>
+            </div>
+            <p style="margin: 0 0 8px 0; font-size: 0.82rem; color: #666;">${spot.description}</p>
+            <div style="padding: 10px; border-radius: 6px; font-size: 0.82rem; line-height: 1.5; background: ${isCleared ? '#fcf8f7' : '#f2eee7'}; color: ${isCleared ? '#2c2c2c' : '#777777'}; border: 1px dashed ${isCleared ? '#c8a063' : '#d5cebe'};">
+              ${isCleared ? `💡 <strong>豆知識：</strong><br>${spot.trivia}` : '🔒 <em>スタンプを獲得すると、このスポットの豆知識が見られます！</em>'}
+            </div>
+          </div>
+        `;
+      });
+
+      guideList.innerHTML = html;
+    }
+
+    function checkCompletion() {
+      if (acquiredStamps.length === 4) {
+        const saveBtn = document.getElementById('saveImgBtn');
+        if (saveBtn) saveBtn.style.display = 'block';
+
+        if (!userCompletionOrder) {
+          let count = parseInt(localStorage.getItem('iriki_total_completers') || '0') + 1;
+          localStorage.setItem('iriki_total_completers', count);
+          localStorage.setItem('iriki_completion_order', count);
+          userCompletionOrder = count;
+        }
+        showCompletionBanner(userCompletionOrder);
+      }
+    }
+
+    function showCompletionBanner(orderNum) {
+      let banner = document.getElementById('completionBanner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'completionBanner';
+        banner.style.cssText = 'margin: 15px 0; padding: 12px; background: #faf3e8; border: 1px solid #c8a063; border-radius: 6px; text-align: center; font-weight: 600; color: #6b4c00; font-size: 0.9rem;';
+        const saveBtn = document.getElementById('saveImgBtn');
+        if (saveBtn && saveBtn.parentNode) {
+          saveBtn.parentNode.insertBefore(banner, saveBtn.nextSibling);
+        }
+      }
+      banner.innerHTML = `🎉 おめでとうございます！あなたは <strong>${orderNum}人目</strong> の達成者です！`;
+    }
+
+    function showTriviaPopup(spot) {
+      const existing = document.getElementById('triviaPopup');
+      if (existing) existing.remove();
+
+      const popup = document.createElement('div');
+      popup.id = 'triviaPopup';
+      popup.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; z-index: 9999; background: #ffffff; border: 1px solid #7a1f1d; border-radius: 8px; padding: 15px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); transition: opacity 0.5s ease;';
+
+      popup.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-weight:600; color:#7a1f1d; font-size:0.92rem;">✨ スタンプ獲得！</span>
+          <button onclick="document.getElementById('triviaPopup').remove()" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#7a1f1d;">×</button>
+        </div>
+        <div style="font-weight:600; margin-bottom:5px; font-size:0.88rem; color:#2c2c2c;">${spot.name}</div>
+        <div style="font-size:0.82rem; color:#333; line-height:1.5; background:#faf8f5; padding:8px; border-radius:4px; border: 1px dashed #c8a063;">
+          💡 ${spot.trivia}
+        </div>
+      `;
+
+      document.body.appendChild(popup);
+
+      setTimeout(() => {
+        if (document.getElementById('triviaPopup')) {
+          document.getElementById('triviaPopup').style.opacity = '0';
+          setTimeout(() => {
+            if (document.getElementById('triviaPopup')) {
+              document.getElementById('triviaPopup').remove();
+            }
+          }, 500);
+        }
+      }, 5000);
+    }
+
+    function acquireStamp(spotId) {
+      const targetSpot = STAMP_SPOTS.find(s => s.id === spotId);
+      const isNew = !acquiredStamps.includes(spotId);
+
+      if (isNew) {
+        acquiredStamps.push(spotId);
+        localStorage.setItem('iriki_acquired_stamps', JSON.stringify(acquiredStamps));
+        if (targetSpot) showTriviaPopup(targetSpot);
+      }
+
+      updateLayeredStamp();
+      renderGuideSpotList();
+      checkCompletion();
+    }
+
+    function updateLayeredStamp() {
+      const card = document.getElementById('stampCard');
+      if (card) card.className = `stamp-card step-${acquiredStamps.length}`;
+      
+      const countEl = document.getElementById('currentStampCount');
+      if (countEl) countEl.textContent = acquiredStamps.length;
+    }
+
+    function renderTestPanel() {
+      const container = document.getElementById('testButtons');
+      if (!container) return;
+      let html = '';
+      STAMP_SPOTS.forEach((spot, idx) => {
+        html += `<button onclick="acquireStamp('${spot.id}')" style="margin:2px; padding:6px 10px; font-size:0.78rem; border-radius:4px; border:1px solid #c8a063; background:#fff;">スポット${idx + 1}</button>`;
+      });
+      html += `<button onclick="resetStamps()" style="margin:2px; padding:6px 10px; font-size:0.78rem; background:#7a1f1d; color:#fff; border:none; border-radius:4px;">リセット</button>`;
+      container.innerHTML = html;
+    }
+
+    function resetStamps() {
+      acquiredStamps = [];
+      userCompletionOrder = null;
+      localStorage.removeItem('iriki_acquired_stamps');
+      localStorage.removeItem('iriki_completion_order');
+      const saveBtn = document.getElementById('saveImgBtn');
+      if (saveBtn) saveBtn.style.display = 'none';
+      const banner = document.getElementById('completionBanner');
+      if (banner) banner.remove();
+      const popup = document.getElementById('triviaPopup');
+      if (popup) popup.remove();
+      
+      updateLayeredStamp();
+      renderGuideSpotList();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateLayeredStamp();
+      renderGuideSpotList();
+      checkCompletion();
+      renderTestPanel();
+    });
+  </script>
+</body>
+</html>
