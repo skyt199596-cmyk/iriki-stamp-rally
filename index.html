@@ -7,16 +7,16 @@
 <style>
 :root{--red:#7a1f1d;--bg:#f7f5f0;--card:#fff;--line:#e5dfd5;--gold:#c8a063;--ink:#2c2c2c;--nav:#1f1c1a}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;background:var(--bg);color:var(--ink);line-height:1.8;padding-bottom:84px}
+body{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.8;padding-bottom:84px}
 header{background:var(--red);color:#fff;text-align:center;padding:18px 12px 16px;border-bottom:3px solid var(--gold);padding-top:calc(18px + env(safe-area-inset-top,0px))}
-header h1{font-size:1.25rem;letter-spacing:.12em;font-weight:700}
-header p{font-size:.85rem;letter-spacing:.2em;opacity:.9}
+header h1{font-size:1.25rem;letter-spacing:.1em;font-weight:700}
+header p{font-size:.85rem;letter-spacing:.15em;opacity:.9}
 main{max-width:560px;margin:0 auto;padding:16px}
 .page-content{display:none}.page-content.active{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px}
-.section-title{font-size:1.1rem;color:var(--red);padding-bottom:6px;margin-bottom:12px;position:relative;letter-spacing:.08em}
+.section-title{font-size:1.1rem;color:var(--red);padding-bottom:6px;margin-bottom:12px;position:relative;letter-spacing:.06em}
 .section-title::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;background:linear-gradient(90deg,var(--gold) 0,var(--gold) 40%,transparent 40%)}
-.badge{display:block;text-align:center;font-weight:700;color:var(--red);border:1px solid var(--gold);border-radius:8px;background:#fff;padding:8px;margin-bottom:14px;letter-spacing:.1em}
+.badge{display:block;text-align:center;font-weight:700;color:var(--red);border:1px solid var(--gold);border-radius:8px;background:#fff;padding:8px;margin-bottom:14px;letter-spacing:.08em}
 .board{position:relative;width:100%;aspect-ratio:1/1;background:#fbf9f4;border:2px solid var(--gold);border-radius:8px;overflow:hidden}
 .board img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.1s ease}
 .board.step-1 .l1,.board.step-2 .l1,.board.step-3 .l1,.board.step-4 .l1,
@@ -24,10 +24,13 @@ main{max-width:560px;margin:0 auto;padding:16px}
 .board.step-3 .l3,.board.step-4 .l3,.board.step-4 .l4{opacity:1}
 .board .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#9a8f7e;font-size:.9rem;padding:24px;pointer-events:none}
 .board:not(.step-0) .hint{display:none}
-.btn{display:block;width:100%;border:0;border-radius:8px;padding:14px;font:inherit;font-weight:700;font-size:1rem;letter-spacing:.08em;color:#fff;background:var(--red);margin-top:12px;cursor:pointer}
+.btn{display:block;width:100%;border:0;border-radius:8px;padding:14px;font:inherit;font-weight:700;font-size:1rem;letter-spacing:.05em;color:#fff;background:var(--red);margin-top:12px;cursor:pointer}
 .btn.gold{background:var(--gold);color:#2c2c2c}
-.btn:focus-visible,nav button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .btn.sub{background:#fff;color:var(--red);border:1px solid var(--red)}
+.btn:focus-visible,nav button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn.small{display:inline-block;width:auto;padding:6px 16px;font-size:.85rem;margin-top:8px}
+.lang{margin-top:26px;text-align:center}
+.lang button{font:inherit;font-size:.95rem;background:#fff;color:var(--ink);border:1px solid var(--gold);border-radius:99px;padding:8px 22px;cursor:pointer}
 .done{margin-top:12px;padding:12px;border:2px solid var(--gold);border-radius:8px;background:#fffaf0;text-align:center;font-weight:700;color:var(--red)}
 .hidden{display:none!important}
 .spot{border-left:4px solid var(--red)}
@@ -42,7 +45,6 @@ ul.plain{list-style:none}ul.plain li{padding:6px 0;border-bottom:1px solid var(-
 ol.steps{padding-left:1.4em}ol.steps li{margin-bottom:8px;font-size:.93rem}
 ol.steps b{color:var(--red)}
 .warn{border:2px solid var(--red)}
-.warn .section-title{color:var(--red)}
 .warn li{margin-left:1.2em;margin-bottom:4px;font-size:.93rem}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--nav);display:flex;border-top:2px solid var(--gold);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
 nav button{flex:1;background:none;border:0;color:#b8aea0;font:inherit;font-size:.75rem;padding:9px 0 8px;cursor:pointer}
@@ -54,125 +56,173 @@ nav button.active{color:var(--gold)}
 #scanner{position:fixed;inset:0;background:rgba(20,16,14,.94);z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;color:#fff;text-align:center}
 #scanner video{width:100%;max-width:420px;border:2px solid var(--gold);border-radius:8px;background:#000}
 #scanner p{margin:10px 0;font-size:.9rem}
-.dev{border:1px dashed #999;background:#faf8f3}
-.dev h2{font-size:.95rem;color:#666;margin-bottom:8px}
-.dev .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.dev button{font:inherit;font-size:.8rem;padding:8px;border:1px solid #bbb;border-radius:6px;background:#fff;cursor:pointer}
-.dev button.reset{grid-column:1/-1;color:var(--red);border-color:var(--red)}
 @media (prefers-reduced-motion:reduce){.board img,#toast{transition:none}}
 </style>
 </head>
 <body>
-<header><h1>入来麓武家屋敷群</h1><p>〜 重ね押しスタンプラリー 〜</p></header>
+<header><h1 data-i18n="h1"></h1><p data-i18n="h2"></p></header>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <main>
-<!-- ホーム -->
 <section id="page-home" class="page-content active">
-  <div class="badge" id="count-badge">スタンプ獲得数: 0 / 4</div>
+  <div class="badge" id="count-badge"></div>
   <div class="board step-0" id="board">
     <img class="l1" src="stamp_step1.png" alt="" onerror="this.style.display='none'">
     <img class="l2" src="stamp_step2.png" alt="" onerror="this.style.display='none'">
     <img class="l3" src="stamp_step3.png" alt="" onerror="this.style.display='none'">
     <img class="l4" src="stamp_step4.png" alt="" onerror="this.style.display='none'">
-    <div class="hint">スポットを巡ってスタンプを押すと、<br>絵が重なって完成します</div>
+    <div class="hint" data-i18n-html="hint"></div>
   </div>
   <div id="complete-area"></div>
-  <button class="btn" id="btn-scan">📷 QRコードをスキャン</button>
-  <button class="btn gold hidden" id="btn-save">🖼️ イラストを保存</button>
-
-  <div class="card dev" style="margin-top:22px">
-    <h2>🛠 開発・確認用テストパネル</h2>
-    <div class="row" id="dev-row"></div>
-  </div>
+  <button class="btn" id="btn-scan" data-i18n="scan"></button>
+  <button class="btn gold hidden" id="btn-save" data-i18n="save"></button>
+  <div class="lang"><button id="btn-lang"></button></div>
 </section>
 
-<!-- ガイド -->
 <section id="page-guide" class="page-content">
   <div class="card">
-    <h2 class="section-title">入来麓武家屋敷群とは</h2>
-    <p style="font-size:.93rem">入来麓は、薩摩藩の外城（とじょう）の一つ「入来郷」の中心として栄えた武家集落です。国の重要伝統的建造物群保存地区に選定され、樋脇川の丸石を積んだ玉石垣と、曲がりくねった道が今も残ります。生け垣と石垣に挟まれた道を歩けば、外敵に備えた城下の工夫と、400年続く暮らしの気配を感じられます。</p>
+    <h2 class="section-title" data-i18n="g_t"></h2>
+    <p style="font-size:.93rem" data-i18n="g_p"></p>
   </div>
-  <h2 class="section-title">スポットガイド</h2>
+  <h2 class="section-title" data-i18n="sg_t"></h2>
   <div id="spot-list"></div>
 </section>
 
-<!-- 地図 -->
 <section id="page-map" class="page-content">
   <div class="card">
-    <h2 class="section-title">散策イラストマップ</h2>
-    <img class="map-img" src="map_illust.png" alt="入来麓散策イラストマップ" onerror="this.outerHTML='<div class=&quot;fallback&quot;>イラストマップを読み込めませんでした。<br>観光案内所で紙のマップをお受け取りください。</div>'">
+    <h2 class="section-title" data-i18n="m1"></h2>
+    <img class="map-img" src="map_illust.png" alt="" onerror="this.style.display='none';document.getElementById('map-fb').classList.remove('hidden')">
+    <div id="map-fb" class="fallback hidden" data-i18n="m_fb"></div>
   </div>
   <div class="card">
-    <h2 class="section-title">Googleマップ</h2>
-    <iframe title="入来麓観光案内所の地図" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=入来麓観光案内所&output=embed"></iframe>
+    <h2 class="section-title" data-i18n="m2"></h2>
+    <iframe title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=入来麓観光案内所&output=embed"></iframe>
   </div>
   <div class="card">
-    <h2 class="section-title">施設営業案内</h2>
-    <ul class="plain">
-      <li><b>入来麓観光案内所</b>　9:00〜17:00</li>
-      <li><b>旧増田家住宅</b>　9:00〜17:00（月曜休館）</li>
-    </ul>
+    <h2 class="section-title" data-i18n="m3"></h2>
+    <ul class="plain"><li data-i18n="m3a"></li><li data-i18n="m3b"></li></ul>
   </div>
   <div class="card">
-    <h2 class="section-title">駐車場・トイレ</h2>
-    <ul class="plain">
-      <li><b>駐車場</b>　無料駐車場（観光案内所横）</li>
-      <li><b>トイレ</b>　公衆トイレ（案内所横、旧増田家住宅敷地内）</li>
-    </ul>
+    <h2 class="section-title" data-i18n="m4"></h2>
+    <ul class="plain"><li data-i18n="m4a"></li><li data-i18n="m4b"></li></ul>
   </div>
 </section>
 
-<!-- 使い方 -->
 <section id="page-usage" class="page-content">
   <div class="card">
-    <h2 class="section-title">スタンプラリーの遊び方</h2>
+    <h2 class="section-title" data-i18n="u1"></h2>
     <ol class="steps">
-      <li><b>スポットを巡ろう</b><br>ガイドや地図を参考に、4つのスポットを散策します。</li>
-      <li><b>QRコードをスキャン</b><br>現地のQRコードをカメラで読み取ります。</li>
-      <li><b>重ね押しでイラスト完成！</b><br>押すたびに絵が重なり、スポットの豆知識が読めるようになります。</li>
-      <li><b>完成イラストを保存</b><br>達成順位入りの画像をダウンロードできます。</li>
+      <li><b data-i18n="s1t"></b><br><span data-i18n="s1d"></span></li>
+      <li><b data-i18n="s2t"></b><br><span data-i18n="s2d"></span></li>
+      <li><b data-i18n="s3t"></b><br><span data-i18n="s3d"></span></li>
+      <li><b data-i18n="s4t"></b><br><span data-i18n="s4d"></span></li>
     </ol>
   </div>
   <div class="card warn">
-    <h2 class="section-title">散策時の禁止事項・マナー</h2>
+    <h2 class="section-title" data-i18n="u2"></h2>
     <ul>
-      <li><b>立ち入り禁止場所に入らない</b>：住民の方が暮らす個人宅や私有地には入らないでください。</li>
-      <li><b>歩きスマホをしない</b>：不揃いな石垣や階段では、立ち止まってから操作してください。</li>
-      <li><b>歴史的建造物・石垣を守る</b>：登ったり、傷つけたりしないでください。</li>
-      <li><b>ゴミは持ち帰る</b></li>
+      <li><b data-i18n="w1t"></b><span data-i18n="w1d"></span></li>
+      <li><b data-i18n="w2t"></b><span data-i18n="w2d"></span></li>
+      <li><b data-i18n="w3t"></b><span data-i18n="w3d"></span></li>
+      <li><b data-i18n="w4t"></b></li>
     </ul>
   </div>
   <div class="card">
-    <h2 class="section-title">アプリご利用上の注意</h2>
-    <ul class="plain">
-      <li>ブラウザのキャッシュや履歴を削除すると、獲得したスタンプがリセットされます。</li>
-      <li>QRコードの読み取りには、カメラへのアクセス許可が必要です。</li>
-    </ul>
+    <h2 class="section-title" data-i18n="u3"></h2>
+    <ul class="plain"><li data-i18n="n1"></li><li data-i18n="n2"></li></ul>
   </div>
 </section>
 </main>
 
-<nav aria-label="メインメニュー">
-  <button data-page="home" class="active"><span>🏯</span>ホーム</button>
-  <button data-page="guide"><span>📖</span>ガイド</button>
-  <button data-page="map"><span>🗺️</span>地図</button>
-  <button data-page="usage"><span>ℹ️</span>使い方</button>
+<nav aria-label="Menu">
+  <button data-page="home" class="active"><span>🏯</span><i style="font-style:normal" data-i18n="nav1"></i></button>
+  <button data-page="guide"><span>📖</span><i style="font-style:normal" data-i18n="nav2"></i></button>
+  <button data-page="map"><span>🗺️</span><i style="font-style:normal" data-i18n="nav3"></i></button>
+  <button data-page="usage"><span>ℹ️</span><i style="font-style:normal" data-i18n="nav4"></i></button>
 </nav>
 
 <script>
 (function(){
+  /* ===== 達成順位カウンター（全端末共通）の設定 =====
+     Google Apps Script のURL（…/exec）をここに貼ります。空のままだと端末ごとの数え方になります。 */
+  var COUNTER_URL="";
+
+  var T={
+  ja:{title:"入来麓武家屋敷群 重ね押しスタンプラリー",h1:"入来麓武家屋敷群",h2:"〜 重ね押しスタンプラリー 〜",
+    nav1:"ホーム",nav2:"ガイド",nav3:"地図",nav4:"使い方",
+    badge:"スタンプ獲得数: {n} / 4",hint:"スポットを巡ってスタンプを押すと、<br>絵が重なって完成します",
+    scan:"📷 QRコードをスキャン",save:"🖼️ イラストを保存",lang:"🌐 English",
+    done:"🎉 おめでとうございます！あなたは {n}人目 の達成者です！",wait:"達成順位を取得しています…",
+    fail:"達成順位を取得できませんでした。通信状況を確認してください。",retry:"再取得",
+    g_t:"入来麓武家屋敷群とは",g_p:"入来麓は、薩摩藩の外城（とじょう）の一つ「入来郷」の中心として栄えた武家集落です。国の重要伝統的建造物群保存地区に選定され、樋脇川の丸石を積んだ玉石垣と、曲がりくねった道が今も残ります。生け垣と石垣に挟まれた道を歩けば、外敵に備えた城下の工夫と、400年続く暮らしの気配を感じられます。",
+    sg_t:"スポットガイド",got:"✓ 獲得済み",lock:"🔒 スタンプを獲得すると、このスポットの豆知識が見られます！",
+    m1:"散策イラストマップ",m_fb:"イラストマップを読み込めませんでした。観光案内所で紙のマップをお受け取りください。",m2:"Googleマップ",
+    m3:"施設営業案内",m3a:"入来麓観光案内所　9:00〜17:00",m3b:"旧増田家住宅　9:00〜17:00（月曜休館）",
+    m4:"駐車場・トイレ",m4a:"駐車場：無料駐車場（観光案内所横）",m4b:"トイレ：公衆トイレ（案内所横、旧増田家住宅敷地内）",
+    u1:"スタンプラリーの遊び方",
+    s1t:"スポットを巡ろう",s1d:"ガイドや地図を参考に、4つのスポットを散策します。",
+    s2t:"QRコードをスキャン",s2d:"現地のQRコードをカメラで読み取ります。",
+    s3t:"重ね押しでイラスト完成！",s3d:"押すたびに絵が重なり、スポットの豆知識が読めるようになります。",
+    s4t:"完成イラストを保存",s4d:"達成順位入りの画像をダウンロードできます。",
+    u2:"散策時の禁止事項・マナー",
+    w1t:"立ち入り禁止場所に入らない",w1d:"：住民の方が暮らす個人宅や私有地には入らないでください。",
+    w2t:"歩きスマホをしない",w2d:"：不揃いな石垣や階段では、立ち止まってから操作してください。",
+    w3t:"歴史的建造物・石垣を守る",w3d:"：登ったり、傷つけたりしないでください。",w4t:"ゴミは持ち帰る",
+    u3:"アプリご利用上の注意",n1:"ブラウザのキャッシュや履歴を削除すると、獲得したスタンプがリセットされます。",n2:"QRコードの読み取りには、カメラへのアクセス許可が必要です。",
+    t_got:"獲得済みです",t_got2:"{s} のスタンプはすでに押されています。",t_new:"✓ {s} のスタンプを獲得！",t_tip:"豆知識：",
+    sc_t:"QRコードを枠内に写してください",sc_close:"閉じる",sc_nocam:"このブラウザではカメラを使えません。HTTPSのページを、SafariやChromeなどの標準ブラウザで開いてください。",
+    sc_prep:"読み取り機能を準備しています…",sc_lib:"読み取り機能を読み込めませんでした。通信状況を確認するか、標準のカメラアプリでQRコードを読み取ってください。",
+    sc_deny:"カメラを使用できません。ブラウザの設定でカメラへのアクセスを許可してください。",sc_bad:"このアプリのQRコードではありません。",
+    cv1:"入来麓武家屋敷群 重ね押しスタンプラリー",cv2:"あなたは {n}人目 の達成者です",cv_err:"画像を保存できませんでした。"},
+  en:{title:"Iriki Fumoto Samurai Residences – Stacking Stamp Rally",h1:"Iriki Fumoto Samurai Residences",h2:"~ Stacking Stamp Rally ~",
+    nav1:"Home",nav2:"Guide",nav3:"Map",nav4:"How to Use",
+    badge:"Stamps collected: {n} / 4",hint:"Visit each spot and collect stamps.<br>The picture builds up as you go.",
+    scan:"📷 Scan QR code",save:"🖼️ Save illustration",lang:"🌐 日本語",
+    done:"🎉 Congratulations! You are completer No. {n}!",wait:"Getting your ranking…",
+    fail:"Couldn't get your ranking. Please check your connection.",retry:"Retry",
+    g_t:"About Iriki Fumoto",g_p:"Iriki Fumoto was the center of Iriki-go, one of the outlying districts (tojo) of the Satsuma Domain, and was home to its samurai families. It is designated a Preservation District for Groups of Traditional Buildings of national importance. Stone walls built from round river stones of the Hiwaki River and winding lanes still remain. Walking between hedges and stone walls, you can sense both the defensive ingenuity of the castle district and everyday life that has continued for 400 years.",
+    sg_t:"Spot Guide",got:"✓ Collected",lock:"🔒 Collect this spot's stamp to unlock its trivia!",
+    m1:"Illustrated Walking Map",m_fb:"Couldn't load the illustrated map. Please pick up a paper map at the information center.",m2:"Google Map",
+    m3:"Opening Hours",m3a:"Iriki Fumoto Tourist Information Center: 9:00–17:00",m3b:"Former Masuda Residence: 9:00–17:00 (closed on Mondays)",
+    m4:"Parking & Restrooms",m4a:"Parking: free parking (next to the information center)",m4b:"Restrooms: public restrooms (next to the information center and on the grounds of the Former Masuda Residence)",
+    u1:"How the Stamp Rally Works",
+    s1t:"Visit the spots",s1d:"Use the guide and map to explore the four spots.",
+    s2t:"Scan the QR codes",s2d:"Scan the QR code at each spot with your camera.",
+    s3t:"Build the picture by stacking stamps",s3d:"Each stamp adds a layer to the picture and unlocks that spot's trivia.",
+    s4t:"Save your finished picture",s4d:"Download an image that shows your completion number.",
+    u2:"Rules & Etiquette",
+    w1t:"Keep out of off-limits areas",w1d:": Do not enter private homes or land where people live.",
+    w2t:"No walking while using your phone",w2d:": Stop before using your phone on uneven stone walls and steps.",
+    w3t:"Protect historic buildings and walls",w3d:": Do not climb on them or damage them.",w4t:"Take your trash home.",
+    u3:"Notes on Using This App",n1:"Clearing your browser's cache or history will reset your stamps.",n2:"Camera access must be allowed to scan QR codes.",
+    t_got:"Already collected",t_got2:"The stamp for {s} has already been collected.",t_new:"✓ Stamp collected: {s}",t_tip:"Trivia: ",
+    sc_t:"Point the camera at the QR code",sc_close:"Close",sc_nocam:"The camera is not available. Open this page over HTTPS in a standard browser such as Safari or Chrome.",
+    sc_prep:"Preparing the scanner…",sc_lib:"Couldn't load the scanner. Check your connection, or scan the QR code with your phone's camera app.",
+    sc_deny:"Can't use the camera. Please allow camera access in your browser settings.",sc_bad:"This is not a QR code for this app.",
+    cv1:"Iriki Fumoto Stacking Stamp Rally",cv2:"You are completer No. {n}",cv_err:"Couldn't save the image."}
+  };
+
   var SPOTS=[
-    {id:"spot1",name:"1. 入来麓観光案内所",tip:"道の曲がり角に設けられた「枡形」の門構造は、敵の侵入を遅らせるための工夫です。直進できない造りが、武家集落の防御を支えました。"},
-    {id:"spot2",name:"2. お仮屋馬場",tip:"樋脇川の丸石を積み上げた玉石垣が続きます。丸い石を組み合わせた石垣は、地震にも強い積み方といわれます。"},
-    {id:"spot3",name:"3. 清色城跡",tip:"シラス台地を掘り割った「堀切」が残ります。火山灰が積もった地形を巧みに利用した、中世山城の防御施設です。"},
-    {id:"spot4",name:"4. 旧増田家住宅",tip:"「おもて」と「なかえ」が並ぶ二ツ家構造の主屋です。来客を迎える棟と家族の暮らす棟が分かれていました。"}
+    {id:"spot1",ja:"1. 入来麓観光案内所",en:"1. Iriki Fumoto Tourist Information Center (入来麓観光案内所)",
+     tja:"道の曲がり角に設けられた「枡形」の門構造は、敵の侵入を遅らせるための工夫です。直進できない造りが、武家集落の防御を支えました。",
+     ten:"The masugata, a gate with a bent entrance placed at a turn in the road, was designed to slow down intruders. Because you cannot walk straight through, it was a key part of the district's defenses."},
+    {id:"spot2",ja:"2. お仮屋馬場",en:"2. Okariya Baba (お仮屋馬場)",
+     tja:"樋脇川の丸石を積み上げた玉石垣が続きます。丸い石を組み合わせた石垣は、地震にも強い積み方といわれます。",
+     ten:"Tamaishi walls, stacked from round stones of the Hiwaki River, line this lane. Fitting round stones together is said to hold up well against earthquakes."},
+    {id:"spot3",ja:"3. 清色城跡",en:"3. Castle Ruins (清色城跡)",
+     tja:"シラス台地を掘り割った「堀切」が残ります。火山灰が積もった地形を巧みに利用した、中世山城の防御施設です。",
+     ten:"A horikiri, a trench cut through the Shirasu plateau, still remains. This defensive feature of a medieval mountain castle made clever use of the volcanic-ash terrain."},
+    {id:"spot4",ja:"4. 旧増田家住宅",en:"4. Former Masuda Residence (旧増田家住宅)",
+     tja:"「おもて」と「なかえ」が並ぶ二ツ家構造の主屋です。来客を迎える棟と家族の暮らす棟が分かれていました。",
+     ten:"The main house is a futatsu-ya, built as two parts side by side: the omote, for receiving guests, and the nakae, where the family lived."}
   ];
-  var K_ST="iriki_acquired_stamps",K_TOT="iriki_total_completers",K_ORD="iriki_completion_order";
+
+  var K_ST="iriki_acquired_stamps",K_TOT="iriki_total_completers",K_ORD="iriki_completion_order",K_SYNC="iriki_order_synced",K_LANG="iriki_lang";
   function load(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}}
   function store(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
   var $=function(s){return document.querySelector(s)};
-
+  var lang=load(K_LANG,null)||((navigator.language||"ja").slice(0,2)==="ja"?"ja":"en");
+  function t(k,v){var s=(T[lang]&&T[lang][k]!==undefined)?T[lang][k]:T.ja[k];if(v)for(var x in v)s=s.replace("{"+x+"}",v[x]);return s}
   function acquired(){var a=load(K_ST,[]);return Array.isArray(a)?a:[]}
 
   function show(page){
@@ -182,14 +232,35 @@ nav button.active{color:var(--gold)}
   }
   document.querySelectorAll("nav button").forEach(function(b){b.addEventListener("click",function(){show(b.dataset.page)})});
 
+  /* 達成順位 */
+  var busy=false;
+  function ensureOrder(){
+    if(acquired().length<4||busy)return;
+    if(!COUNTER_URL){
+      if(!load(K_ORD,null)){var n=(load(K_TOT,0)||0)+1;store(K_TOT,n);store(K_ORD,n)}
+      render();return;
+    }
+    if(load(K_SYNC,false)){render();return}
+    busy=true;render();
+    fetch(COUNTER_URL+"?action=complete").then(function(r){return r.json()}).then(function(j){
+      if(j&&j.order){store(K_ORD,j.order);store(K_TOT,j.order);store(K_SYNC,true)}
+    }).catch(function(){}).then(function(){busy=false;render()});
+  }
+
   function render(){
     var got=acquired(),n=got.length;
-    $("#count-badge").textContent="スタンプ獲得数: "+n+" / 4";
+    $("#count-badge").textContent=t("badge",{n:n});
     $("#board").className="board step-"+n;
     var area=$("#complete-area");area.innerHTML="";
     if(n>=4){
       var d=document.createElement("div");d.className="done";
-      d.textContent="🎉 おめでとうございます！あなたは "+load(K_ORD,"—")+"人目 の達成者です！";
+      var ord=load(K_ORD,null),ok=ord&&(!COUNTER_URL||load(K_SYNC,false));
+      if(ok){d.textContent=t("done",{n:ord})}
+      else if(busy){d.textContent=t("wait")}
+      else{
+        d.textContent=t("fail");d.appendChild(document.createElement("br"));
+        var b=document.createElement("button");b.className="btn small";b.textContent=t("retry");b.onclick=ensureOrder;d.appendChild(b);
+      }
       area.appendChild(d);
     }
     $("#btn-save").classList.toggle("hidden",n<4);
@@ -197,62 +268,60 @@ nav button.active{color:var(--gold)}
     SPOTS.forEach(function(s){
       var has=got.indexOf(s.id)>-1,c=document.createElement("div");
       c.className="card spot"+(has?"":" locked");
-      var h=document.createElement("h3"),t=document.createElement("span");t.textContent=s.name;h.appendChild(t);
-      if(has){var g=document.createElement("span");g.className="tag";g.textContent="✓ 獲得済み";h.appendChild(g)}
-      var p=document.createElement("p");p.textContent=has?s.tip:"🔒 スタンプを獲得すると、このスポットの豆知識が見られます！";
+      var h=document.createElement("h3"),nm=document.createElement("span");nm.textContent=s[lang];h.appendChild(nm);
+      if(has){var g=document.createElement("span");g.className="tag";g.textContent=t("got");h.appendChild(g)}
+      var p=document.createElement("p");p.textContent=has?s["t"+lang]:t("lock");
       c.appendChild(h);c.appendChild(p);list.appendChild(c);
     });
   }
 
+  function apply(){
+    document.documentElement.lang=lang;document.title=t("title");
+    document.querySelectorAll("[data-i18n]").forEach(function(e){e.textContent=t(e.dataset.i18n)});
+    document.querySelectorAll("[data-i18n-html]").forEach(function(e){e.innerHTML=t(e.dataset.i18nHtml)});
+    $("#btn-lang").textContent=t("lang");
+    render();
+  }
+  $("#btn-lang").addEventListener("click",function(){lang=lang==="ja"?"en":"ja";store(K_LANG,lang);apply()});
+
   var tt;
   function toast(title,body){
-    var t=$("#toast");t.innerHTML="";
-    var b=document.createElement("b");b.textContent=title;t.appendChild(b);t.appendChild(document.createTextNode(body));
-    t.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("show")},5000);
+    var el=$("#toast");el.innerHTML="";
+    var b=document.createElement("b");b.textContent=title;el.appendChild(b);el.appendChild(document.createTextNode(body||""));
+    el.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){el.classList.remove("show")},5000);
   }
 
   function stamp(id){
-    var s=SPOTS.filter(function(x){return x.id===id})[0];if(!s)return false;
+    var s=SPOTS.filter(function(x){return x.id===id})[0];if(!s)return;
     var got=acquired();
-    if(got.indexOf(id)>-1){toast("獲得済みです",s.name+" のスタンプはすでに押されています。");return false}
-    got.push(id);store(K_ST,got);
-    if(got.length===4){
-      var tot=(load(K_TOT,0)||0)+1;store(K_TOT,tot);store(K_ORD,tot);
-    }
-    render();
-    toast("✓ "+s.name+" のスタンプを獲得！","豆知識：" +s.tip);
-    return true;
+    if(got.indexOf(id)>-1){toast(t("t_got"),t("t_got2",{s:s[lang]}));return}
+    got.push(id);store(K_ST,got);render();
+    toast(t("t_new",{s:s[lang]}),t("t_tip")+s["t"+lang]);
+    if(got.length===4)ensureOrder();
   }
 
-  // QR読み取り
+  /* QR読み取り（iPhone対応：jsQR） */
   var stream=null,scanTimer=null;
-  function parse(raw){
-    var m=String(raw).match(/spot[1-4]/);return m?m[0]:null;
-  }
+  function parse(raw){var m=String(raw).match(/spot[1-4]/);return m?m[0]:null}
   function stopScan(){
     clearInterval(scanTimer);
-    if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}
+    if(stream){stream.getTracks().forEach(function(x){x.stop()});stream=null}
     var o=$("#scanner");if(o)o.remove();
   }
   function startScan(){
     var ov=document.createElement("div");ov.id="scanner";
-    ov.innerHTML='<p>QRコードを枠内に写してください</p><video playsinline muted></video><p id="scan-msg"></p><button class="btn sub" style="max-width:420px" id="scan-close">閉じる</button>';
+    ov.innerHTML='<p></p><video playsinline muted></video><p id="scan-msg"></p><button class="btn sub" style="max-width:420px" id="scan-close"></button>';
     document.body.appendChild(ov);
-    $("#scan-close").onclick=stopScan;
+    ov.querySelector("p").textContent=t("sc_t");
+    $("#scan-close").textContent=t("sc_close");$("#scan-close").onclick=stopScan;
     var msg=$("#scan-msg");
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-      msg.textContent="このブラウザではカメラを使えません。HTTPSのページを、SafariやChromeなどの標準ブラウザで開いてください。";return;
-    }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg.textContent=t("sc_nocam");return}
     var v=ov.querySelector("video"),cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
     var det=("BarcodeDetector" in window)?new BarcodeDetector({formats:["qr_code"]}):null;
-    function found(val){
-      var id=parse(val);
-      if(id){stopScan();stamp(id)}else msg.textContent="このアプリのQRコードではありません。";
-    }
+    function found(val){var id=parse(val);if(id){stopScan();stamp(id)}else msg.textContent=t("sc_bad")}
     function tick(){
-      if(det){
-        det.detect(v).then(function(r){if(r.length)found(r[0].rawValue)}).catch(function(){});
-      }else if(window.jsQR&&v.videoWidth){
+      if(det){det.detect(v).then(function(r){if(r.length)found(r[0].rawValue)}).catch(function(){})}
+      else if(window.jsQR&&v.videoWidth){
         cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);
         var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);
         if(r&&r.data)found(r.data);
@@ -260,60 +329,44 @@ nav button.active{color:var(--gold)}
     }
     function begin(){
       navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false}).then(function(s){
-        stream=s;v.srcObject=s;v.setAttribute("playsinline","");v.play();
-        scanTimer=setInterval(tick,300);
-      }).catch(function(){msg.textContent="カメラを使用できません。ブラウザの設定でカメラへのアクセスを許可してください。"});
+        stream=s;v.srcObject=s;v.setAttribute("playsinline","");v.play();scanTimer=setInterval(tick,300);
+      }).catch(function(){msg.textContent=t("sc_deny")});
     }
     if(det||window.jsQR){begin()}
     else{
-      msg.textContent="読み取り機能を準備しています…";
+      msg.textContent=t("sc_prep");
       var sc=document.createElement("script");
       sc.src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
       sc.onload=function(){msg.textContent="";begin()};
-      sc.onerror=function(){msg.textContent="読み取り機能を読み込めませんでした。通信状況を確認するか、標準のカメラアプリでQRコードを読み取ってください。"};
+      sc.onerror=function(){msg.textContent=t("sc_lib")};
       document.head.appendChild(sc);
     }
   }
   $("#btn-scan").addEventListener("click",startScan);
 
-  // イラスト保存
+  /* イラスト保存 */
   function loadImg(src){return new Promise(function(res){var i=new Image();i.onload=function(){res(i)};i.onerror=function(){res(null)};i.src=src})}
   $("#btn-save").addEventListener("click",function(){
     var S=1080,cv=document.createElement("canvas");cv.width=S;cv.height=S+120;
-    var x=cv.getContext("2d");
-    x.fillStyle="#fbf9f4";x.fillRect(0,0,S,cv.height);
+    var x=cv.getContext("2d");x.fillStyle="#fbf9f4";x.fillRect(0,0,S,cv.height);
     Promise.all([1,2,3,4].map(function(i){return loadImg("stamp_step"+i+".png")})).then(function(imgs){
       imgs.forEach(function(im){if(im){var r=Math.min(S/im.width,S/im.height),w=im.width*r,h=im.height*r;x.drawImage(im,(S-w)/2,(S-h)/2,w,h)}});
-      x.fillStyle="#7a1f1d";x.fillRect(0,S,S,120);
-      x.fillStyle="#c8a063";x.fillRect(0,S,S,6);
+      x.fillStyle="#7a1f1d";x.fillRect(0,S,S,120);x.fillStyle="#c8a063";x.fillRect(0,S,S,6);
       x.fillStyle="#fff";x.textAlign="center";
-      x.font="bold 38px serif";x.fillText("入来麓武家屋敷群 重ね押しスタンプラリー",S/2,S+55);
-      x.font="34px serif";x.fillText("あなたは "+load(K_ORD,"—")+"人目 の達成者です",S/2,S+100);
+      x.font="bold 38px serif";x.fillText(t("cv1"),S/2,S+55);
+      x.font="34px serif";x.fillText(t("cv2",{n:load(K_ORD,"—")}),S/2,S+100);
       try{
         cv.toBlob(function(b){
-          if(!b){alert("画像を保存できませんでした。");return}
+          if(!b){alert(t("cv_err"));return}
           var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="iriki_stamp_complete.png";
           document.body.appendChild(a);a.click();a.remove();
         },"image/png");
-      }catch(e){alert("画像を保存できませんでした。Webサーバー経由で開いてお試しください。")}
+      }catch(e){alert(t("cv_err"))}
     });
   });
 
-  // テストパネル
-  var row=$("#dev-row");
-  SPOTS.forEach(function(s){
-    var b=document.createElement("button");b.textContent="スタンプ押下："+s.name;
-    b.addEventListener("click",function(){stamp(s.id)});row.appendChild(b);
-  });
-  var rb=document.createElement("button");rb.className="reset";rb.textContent="全データをリセット";
-  rb.addEventListener("click",function(){
-    if(!confirm("獲得したスタンプなど、すべてのデータを削除します。よろしいですか？"))return;
-    [K_ST,K_TOT,K_ORD].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});render();
-  });
-  row.appendChild(rb);
-
-  // URLパラメータ ?stamp=spot1 でも獲得可能
-  render();
+  apply();
+  ensureOrder();
   var q=new URLSearchParams(location.search).get("stamp");
   if(q){var id=parse(q);if(id){stamp(id);history.replaceState(null,"",location.pathname)}}
 })();
