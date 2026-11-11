@@ -240,20 +240,39 @@ nav button.active{color:var(--gold)}
     document.body.appendChild(ov);
     $("#scan-close").onclick=stopScan;
     var msg=$("#scan-msg");
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!("BarcodeDetector" in window)){
-      msg.textContent="このブラウザではカメラ読み取りに対応していません。お手持ちのカメラアプリでQRコードを読み取ってください。";return;
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      msg.textContent="このブラウザではカメラを使えません。HTTPSのページを、SafariやChromeなどの標準ブラウザで開いてください。";return;
     }
-    var det=new BarcodeDetector({formats:["qr_code"]}),v=ov.querySelector("video");
-    navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(function(s){
-      stream=s;v.srcObject=s;v.play();
-      scanTimer=setInterval(function(){
-        det.detect(v).then(function(r){
-          if(!r.length)return;
-          var id=parse(r[0].rawValue);
-          if(id){stopScan();stamp(id)}else msg.textContent="このアプリのQRコードではありません。";
-        }).catch(function(){});
-      },400);
-    }).catch(function(){msg.textContent="カメラを使用できません。ブラウザの設定でカメラへのアクセスを許可してください。"});
+    var v=ov.querySelector("video"),cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
+    var det=("BarcodeDetector" in window)?new BarcodeDetector({formats:["qr_code"]}):null;
+    function found(val){
+      var id=parse(val);
+      if(id){stopScan();stamp(id)}else msg.textContent="このアプリのQRコードではありません。";
+    }
+    function tick(){
+      if(det){
+        det.detect(v).then(function(r){if(r.length)found(r[0].rawValue)}).catch(function(){});
+      }else if(window.jsQR&&v.videoWidth){
+        cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);
+        var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);
+        if(r&&r.data)found(r.data);
+      }
+    }
+    function begin(){
+      navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false}).then(function(s){
+        stream=s;v.srcObject=s;v.setAttribute("playsinline","");v.play();
+        scanTimer=setInterval(tick,300);
+      }).catch(function(){msg.textContent="カメラを使用できません。ブラウザの設定でカメラへのアクセスを許可してください。"});
+    }
+    if(det||window.jsQR){begin()}
+    else{
+      msg.textContent="読み取り機能を準備しています…";
+      var sc=document.createElement("script");
+      sc.src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+      sc.onload=function(){msg.textContent="";begin()};
+      sc.onerror=function(){msg.textContent="読み取り機能を読み込めませんでした。通信状況を確認するか、標準のカメラアプリでQRコードを読み取ってください。"};
+      document.head.appendChild(sc);
+    }
   }
   $("#btn-scan").addEventListener("click",startScan);
 
