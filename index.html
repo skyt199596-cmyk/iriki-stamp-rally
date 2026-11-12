@@ -76,7 +76,14 @@ nav button.active{color:var(--gold)}
   <div id="complete-area"></div>
   <button class="btn" id="btn-scan" data-i18n="scan"></button>
   <button class="btn gold hidden" id="btn-save" data-i18n="save"></button>
+  <button class="btn sub hidden" id="btn-again" data-i18n="again"></button>
   <div class="lang"><button id="btn-lang"></button></div>
+  <div class="card hidden" id="admin" style="margin-top:22px;border:1px dashed #999">
+    <h2 class="section-title">管理者用</h2>
+    <button class="btn sub" id="ad-show">達成者数を確認</button>
+    <button class="btn sub" id="ad-reset">達成者数を0に戻す（合言葉が必要）</button>
+    <button class="btn sub" id="ad-wipe">この端末の全データを削除</button>
+  </div>
 </section>
 
 <section id="page-guide" class="page-content">
@@ -131,6 +138,11 @@ nav button.active{color:var(--gold)}
     <h2 class="section-title" data-i18n="u3"></h2>
     <ul class="plain"><li data-i18n="n1"></li><li data-i18n="n2"></li></ul>
   </div>
+  <div class="card">
+    <h2 class="section-title" data-i18n="rs_t"></h2>
+    <p style="font-size:.92rem" data-i18n="rs_d"></p>
+    <button class="btn sub" id="btn-reset" data-i18n="rs_b"></button>
+  </div>
 </section>
 </main>
 
@@ -145,7 +157,7 @@ nav button.active{color:var(--gold)}
 (function(){
   /* ===== 達成順位カウンター（全端末共通）の設定 =====
      Google Apps Script のURL（…/exec）をここに貼ります。空のままだと端末ごとの数え方になります。 */
-  var COUNTER_URL="https://script.google.com/macros/s/AKfycbxXj4qCjmBGjRg0t06bPE6PgCExFGHV55wTHWaCG9kTqDMmfGm8bBeVvbQpP7dLuBajDw/exec";
+  var COUNTER_URL="";
 
   var T={
   ja:{title:"入来麓武家屋敷群 重ね押しスタンプラリー",h1:"入来麓武家屋敷群",h2:"〜 重ね押しスタンプラリー 〜",
@@ -169,6 +181,7 @@ nav button.active{color:var(--gold)}
     w2t:"歩きスマホをしない",w2d:"：不揃いな石垣や階段では、立ち止まってから操作してください。",
     w3t:"歴史的建造物・石垣を守る",w3d:"：登ったり、傷つけたりしないでください。",w4t:"ゴミは持ち帰る",
     u3:"アプリご利用上の注意",n1:"ブラウザのキャッシュや履歴を削除すると、獲得したスタンプがリセットされます。",n2:"QRコードの読み取りには、カメラへのアクセス許可が必要です。",
+    rs_t:"スタンプのリセット",rs_d:"この端末で獲得したスタンプを消して、最初からやり直せます。（達成順位は変わりません）",rs_b:"🔄 スタンプをリセット",again:"🔁 もう一度遊ぶ",ag_c:"スタンプをリセットして、最初から遊びます。イラストの保存はお済みですか？（達成順位は変わりません）",rs_c:"この端末で獲得したスタンプをすべて消します。よろしいですか？",
     t_got:"獲得済みです",t_got2:"{s} のスタンプはすでに押されています。",t_new:"✓ {s} のスタンプを獲得！",t_tip:"豆知識：",
     sc_t:"QRコードを枠内に写してください",sc_close:"閉じる",sc_nocam:"このブラウザではカメラを使えません。HTTPSのページを、SafariやChromeなどの標準ブラウザで開いてください。",
     sc_prep:"読み取り機能を準備しています…",sc_lib:"読み取り機能を読み込めませんでした。通信状況を確認するか、標準のカメラアプリでQRコードを読み取ってください。",
@@ -195,6 +208,7 @@ nav button.active{color:var(--gold)}
     w2t:"No walking while using your phone",w2d:": Stop before using your phone on uneven stone walls and steps.",
     w3t:"Protect historic buildings and walls",w3d:": Do not climb on them or damage them.",w4t:"Take your trash home.",
     u3:"Notes on Using This App",n1:"Clearing your browser's cache or history will reset your stamps.",n2:"Camera access must be allowed to scan QR codes.",
+    rs_t:"Reset Stamps",rs_d:"Clear the stamps collected on this device and start over. (Your completion number will not change.)",rs_b:"🔄 Reset stamps",again:"🔁 Play again",ag_c:"This will clear your stamps so you can play again from the start. Have you saved your illustration? (Your completion number will not change.)",rs_c:"This will clear all stamps collected on this device. Continue?",
     t_got:"Already collected",t_got2:"The stamp for {s} has already been collected.",t_new:"✓ Stamp collected: {s}",t_tip:"Trivia: ",
     sc_t:"Point the camera at the QR code",sc_close:"Close",sc_nocam:"The camera is not available. Open this page over HTTPS in a standard browser such as Safari or Chrome.",
     sc_prep:"Preparing the scanner…",sc_lib:"Couldn't load the scanner. Check your connection, or scan the QR code with your phone's camera app.",
@@ -264,6 +278,7 @@ nav button.active{color:var(--gold)}
       area.appendChild(d);
     }
     $("#btn-save").classList.toggle("hidden",n<4);
+    $("#btn-again").classList.toggle("hidden",n<4);
     var list=$("#spot-list");list.innerHTML="";
     SPOTS.forEach(function(s){
       var has=got.indexOf(s.id)>-1,c=document.createElement("div");
@@ -364,6 +379,39 @@ nav button.active{color:var(--gold)}
       }catch(e){alert(t("cv_err"))}
     });
   });
+
+  /* この端末のスタンプのリセット（達成順位は残す） */
+  function resetStamps(msg){
+    if(!confirm(t(msg)))return;
+    try{localStorage.removeItem(K_ST)}catch(e){}
+    render();show("home");
+  }
+  $("#btn-reset").addEventListener("click",function(){resetStamps("rs_c")});
+  $("#btn-again").addEventListener("click",function(){resetStamps("ag_c")});
+
+  /* 管理者用：URLの末尾に ?admin=1 を付けたときだけ表示 */
+  if(new URLSearchParams(location.search).get("admin")==="1"){
+    $("#admin").classList.remove("hidden");
+    var call=function(qs){
+      if(!COUNTER_URL){alert("COUNTER_URL が設定されていません");return Promise.reject()}
+      return fetch(COUNTER_URL+"?"+qs).then(function(r){return r.json()});
+    };
+    $("#ad-show").onclick=function(){
+      call("action=get").then(function(j){alert("現在の達成者数："+j.order+"人")}).catch(function(){});
+    };
+    $("#ad-reset").onclick=function(){
+      var k=prompt("合言葉を入力してください");if(!k)return;
+      if(!confirm("達成者数を0人に戻します。よろしいですか？"))return;
+      call("action=reset&key="+encodeURIComponent(k)).then(function(j){
+        alert(j.error?"合言葉が違います":"達成者数を0人に戻しました");
+      }).catch(function(){});
+    };
+    $("#ad-wipe").onclick=function(){
+      if(!confirm("この端末の全データ（スタンプ・達成順位）を削除します。よろしいですか？"))return;
+      [K_ST,K_TOT,K_ORD,K_SYNC].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
+      render();
+    };
+  }
 
   apply();
   ensureOrder();
